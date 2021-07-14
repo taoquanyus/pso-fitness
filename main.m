@@ -1,0 +1,9 @@
+N=40;
+c1=2;
+c2=2;
+w=0.5;
+M=50;
+D=10;
+[xm,fv]=new_PSO(@fitness,N,c1,c2,w,M,D);
+xm;
+fv;
