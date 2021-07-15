@@ -1,4 +1,4 @@
-function[xm,fv]=new_PSO(fitness,N,c1,c2,w,M,D)
+function[xm,fv]=new_PSO(fitness,N,c1,c2,w_ini,w_end,M,D)
 %% %位置限制
 tic;
 xMax=[1e-2,1e-2,1e-2,3,1,3,3,3,3,3];
@@ -7,7 +7,7 @@ xMin=[1e-9,1e-9,1e-9,1,1e-14,-3,-3,-3,-3,-3];
 % xMin=[1e-9,1e-9,1e-9,1,1e-14,-3];
 
 %% %速度限制
-v_index=0.1;
+v_index=1/40;
 vMax=v_index*xMax;
 vMin=-vMax;
 
@@ -38,8 +38,11 @@ for row=1:N
 end
 
 %% %M次运算
-result=zeros(1,M);
 for times=1:M
+    w=(w_ini-w_end)*(M-times)/M+w_end;
+    vLarge_exceed=0;
+    vSmall_exceed=0;
+    x_exceed=0;
     for row=1:N
         v(row,:)=w*v(row,:)+c1*rand*(pBest(row,:)-x_cur(row,:))+c2*rand*(gBest-x_cur(row,:));
         
@@ -47,9 +50,11 @@ for times=1:M
         for temp=1:D
             if v(row,temp)>vMax(temp)
                 v(row,temp)=vMax(temp);
+                vLarge_exceed=vLarge_exceed+1;
             end
             if v(row,temp)<vMin(temp)
                 v(row,temp)=vMin(temp);
+                vSmall_exceed=vSmall_exceed+2;
             end
         end
         
@@ -61,11 +66,9 @@ for times=1:M
         end
         
         for temp=1:D
-            if x_cur(row,temp)>xMax(temp)
-                x_cur(row,temp)=xMax(temp);
-            end
-            if x_cur(row,temp)<xMin(temp)
-                x_cur(row,temp)=xMin(temp);
+            if x_cur(row,temp)>xMax(temp)||x_cur(row,temp)<xMin(temp)
+                x_cur(row,temp)=rand()*(xMax(temp)-xMin(temp))+xMin(temp);
+                x_exceed=x_exceed+1;
             end
         end
         
@@ -80,10 +83,10 @@ for times=1:M
             end
         end
     end
-    disp("current: "+times+" total: "+M +" time= "+toc+" opt= "+gBest_result);
+    disp("current: "+times+" total: "+M +" time= "+toc+" opt= "+gBest_result+" V_exceed: "+vLarge_exceed+" "+vSmall_exceed+" x_exceed "+x_exceed);
     
     result(times)=gBest_result;
-    plot(times,result,'o');
+    plot(result,'o');
     hold on;
     pause(0.5);
     

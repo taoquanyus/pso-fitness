@@ -117,7 +117,6 @@ for p=1:length(t)
             sz(m)=sa(p);
         end
         
-        
         B=(Qp(3)*sign(Qp(3)))^alpha(3)*((l-d)/M)^P*C;
         sl(p)=B*(Q(3)^P);
         sa(p)=mean(sz);
