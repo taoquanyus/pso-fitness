@@ -7,7 +7,7 @@ xMin=[1e-9,1e-9,1e-9,1,1e-14,-3,-3,-3,-3,-3];
 % xMin=[1e-9,1e-9,1e-9,1,1e-14,-3];
 
 %% %速度限制
-v_index=1/40;
+v_index=0.15;
 vMax=v_index*xMax;
 vMin=-vMax;
 
@@ -42,7 +42,7 @@ for times=1:M
     w=(w_ini-w_end)*(M-times)/M+w_end;
     vLarge_exceed=0;
     vSmall_exceed=0;
-    x_exceed=0;
+    xLarge_exceed=0;
     for row=1:N
         v(row,:)=w*v(row,:)+c1*rand*(pBest(row,:)-x_cur(row,:))+c2*rand*(gBest-x_cur(row,:));
         
@@ -54,7 +54,7 @@ for times=1:M
             end
             if v(row,temp)<vMin(temp)
                 v(row,temp)=vMin(temp);
-                vSmall_exceed=vSmall_exceed+2;
+                vSmall_exceed=vSmall_exceed+1;
             end
         end
         
@@ -66,9 +66,13 @@ for times=1:M
         end
         
         for temp=1:D
-            if x_cur(row,temp)>xMax(temp)||x_cur(row,temp)<xMin(temp)
-                x_cur(row,temp)=rand()*(xMax(temp)-xMin(temp))+xMin(temp);
-                x_exceed=x_exceed+1;
+            if x_cur(row,temp)>xMax(temp)
+                x_cur(row,temp)=xMax(temp);
+                xLarge_exceed=xLarge_exceed+1;
+            end
+            if x_cur(row,temp)<xMax(temp)
+                x_cur(row,temp)=xMin(temp);
+                xSmall_exceed=xSmall_exceed+1;
             end
         end
         
@@ -83,11 +87,10 @@ for times=1:M
             end
         end
     end
-    disp("current: "+times+" total: "+M +" time= "+toc+" opt= "+gBest_result+" V_exceed: "+vLarge_exceed+" "+vSmall_exceed+" x_exceed "+x_exceed);
-    
+    disp("current: "+times+" total: "+M +" time= "+toc+" opt= "+gBest_result+" V_exceed: "+vLarge_exceed+" "+vSmall_exceed+" x_exceed "+xLarge_exceed+" "+xSmall_exceed);
+%     disp(x_cur');
     result(times)=gBest_result;
     plot(result,'o');
-    hold on;
     pause(0.5);
     
     if gBest_result<0.1
