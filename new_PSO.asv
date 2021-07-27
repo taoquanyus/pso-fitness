@@ -7,9 +7,8 @@ xMin=[1e-9,1e-9,1e-9,1,1e-14,-3,-3,-3,-3,-3];
 % xMin=[1e-9,1e-9,1e-9,1,1e-14,-3];
 
 %% %速度限制
-% v_index=0.15;
-% vMax=v_index*(xMax-xMin);
-vMax=0.5*ones(1,10);
+v_index=0.15;
+vMax=v_index*(xMax-xMin);
 vMin=-vMax;
 
 %% %初始化位置,速度
@@ -40,7 +39,7 @@ end
 
 %% %M次运算
 nums=1;
-result_collection(nums,:)=gBest;
+result_collection(nums,:)=result_collection();
 for times=1:M
     w=(w_ini-w_end)*(M-times)/M+w_end;
 
@@ -87,19 +86,17 @@ for times=1:M
                 nums=nums+1;
                 gBest=pBest(row,:);
                 result_collection(nums,:)=gBest;
-                figure(2)
-                validate(gBest);
             end
         end
     end
     disp("current: "+times+" total: "+M +" time= "+toc+" opt= "+gBest_result+" Update Times= "+nums);
-%     disp(gBest);
+    disp(gBest);
     result(times)=gBest_result;
     figure(1)
-    plot(result);
-    xlabel("lteration Times");
-    ylabel("MSE");
+    plot(result,'o');
     pause(0.5);
+    figure(2)
+    validate(gBest_result)
     
     if gBest_result<0.1
         break;

@@ -227,7 +227,6 @@ for p=1:length(t)
         s(p)=sa(p)+sl(p);
     end
 end
-
 result=(1/length(t)*sum((s-sc').^2))^(1/2);
     if isnan(result)
         F=Inf;
