@@ -7,15 +7,17 @@ xMin=[1e-9,1e-9,1e-9,1,1e-14,-3,-3,-3,-3,-3];
 % xMin=[1e-9,1e-9,1e-9,1,1e-14,-3];
 
 %% %速度限制
-v_index=0.15;
-vMax=v_index*(xMax-xMin);
-vMin=-vMax;
-
+% v_index=0.15;
+% vMax=v_index*(xMax-xMin);
+% vMax=0.5*ones(1,10);
+% vMin=-vMax;
+vMax=0.5;
+vMin=-0.5;
 %% %初始化位置,速度
 
 x_cur=rand(N,D).*(xMax-xMin)+xMin;
 % x_cur(1,:)=[0.000585764066514 0.000123132275533 0.005415238111098 1.408037862239064 0.414684292768394 -2.43 -1.58 -1.58 -1.65 -1.71];
-v=rand(N,D).*(vMax-vMin)+vMin;
+% v=rand(N,D).*(vMax-vMin)+vMin;
 
 %% %首次迭代
 results=zeros(N,1);%结果矩阵
@@ -39,20 +41,19 @@ end
 
 %% %M次运算
 nums=1;
-result_collection(nums,:)=result_collection();
+result_collection(nums,:)=gBest;
 for times=1:M
     w=(w_ini-w_end)*(M-times)/M+w_end;
-
+    
     for row=1:N
         v(row,:)=w*v(row,:)+c1*rand*(pBest(row,:)-x_cur(row,:))+c2*rand*(gBest-x_cur(row,:));
-        
         %速度限制
         for temp=1:D
-            if v(row,temp)>vMax(temp)
-                v(row,temp)=vMax(temp);
+            if v(row,temp)>vMax
+                v(row,temp)=vMax;
             end
-            if v(row,temp)<vMin(temp)
-                v(row,temp)=vMin(temp);
+            if v(row,temp)<vMin
+                v(row,temp)=vMin;
             end
         end
         
@@ -68,7 +69,7 @@ for times=1:M
                 flag=1;
             end
             if x_cur(row,temp)<xMax(temp)
-%                 x_cur(row,temp)=xMin(temp);
+                %                 x_cur(row,temp)=xMin(temp);
                 flag=1;
             end
         end
@@ -86,17 +87,19 @@ for times=1:M
                 nums=nums+1;
                 gBest=pBest(row,:);
                 result_collection(nums,:)=gBest;
+                figure(2)
+                validate(gBest);
             end
         end
     end
     disp("current: "+times+" total: "+M +" time= "+toc+" opt= "+gBest_result+" Update Times= "+nums);
-    disp(gBest);
+    %     disp(gBest);
     result(times)=gBest_result;
     figure(1)
-    plot(result,'o');
+    plot(result);
+    xlabel("lteration Times");
+    ylabel("MSE");
     pause(0.5);
-    figure(2)
-    validate(gBest_result)
     
     if gBest_result<0.1
         break;

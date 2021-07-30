@@ -9,9 +9,10 @@ xMin=[1e-9,1e-9,1e-9,1,1e-14,-3,-3,-3,-3,-3];
 %% %速度限制
 % v_index=0.15;
 % vMax=v_index*(xMax-xMin);
-vMax=0.5*ones(1,10);
-vMin=-vMax;
-
+% vMax=0.5*ones(1,10);
+% vMin=-vMax;
+vMax=0.5;
+vMin=-0.5;
 %% %初始化位置,速度
 
 x_cur=rand(N,D).*(xMax-xMin)+xMin;
@@ -43,17 +44,16 @@ nums=1;
 result_collection(nums,:)=gBest;
 for times=1:M
     w=(w_ini-w_end)*(M-times)/M+w_end;
-
+    
     for row=1:N
         v(row,:)=w*v(row,:)+c1*rand*(pBest(row,:)-x_cur(row,:))+c2*rand*(gBest-x_cur(row,:));
-        
         %速度限制
         for temp=1:D
-            if v(row,temp)>vMax(temp)
-                v(row,temp)=vMax(temp);
+            if v(row,temp)>vMax
+                v(row,temp)=vMax;
             end
-            if v(row,temp)<vMin(temp)
-                v(row,temp)=vMin(temp);
+            if v(row,temp)<vMin
+                v(row,temp)=vMin;
             end
         end
         
@@ -61,15 +61,16 @@ for times=1:M
         x_cur(row,:)=x_cur(row,:)+v(row,:);
         
         if x_cur(row,2)>x_cur(row,1)
-            x_cur(row,2)=x_cur(row,1);
+            x_cur(row,2)=0.1*x_cur(row,1);
         end
+     
         flag=0;
         for temp=1:D
             if x_cur(row,temp)>xMax(temp)
                 flag=1;
             end
-            if x_cur(row,temp)<xMax(temp)
-%                 x_cur(row,temp)=xMin(temp);
+            if x_cur(row,temp)<xMin(temp)
+                %                 x_cur(row,temp)=xMin(temp);
                 flag=1;
             end
         end
@@ -93,7 +94,7 @@ for times=1:M
         end
     end
     disp("current: "+times+" total: "+M +" time= "+toc+" opt= "+gBest_result+" Update Times= "+nums);
-%     disp(gBest);
+    %     disp(gBest);
     result(times)=gBest_result;
     figure(1)
     plot(result);
