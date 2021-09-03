@@ -1,10 +1,12 @@
 function[xm,fv]=new_PSO(fitness,N,c1,c2,w_ini,w_end,M,D)
 %% %位置限制
 tic;
-xMax=[1e-2,1e-2,1e-2,3,1,3,3,3,3,3];
+% xMax=[1e-2,1e-2,1e-2,3,1,3,3,3,3,3];
 % xMax=[1e-2,1e-2,1e-2,3,1,3];
-xMin=[1e-9,1e-9,1e-9,1,1e-14,-3,-3,-3,-3,-3];
+% xMin=[1e-9,1e-9,1e-9,1,1e-14,-3,-3,-3,-3,-3];
 % xMin=[1e-9,1e-9,1e-9,1,1e-14,-3];
+ xMax=[1e-2,1e-2,1e-2,3,1,3];
+ xMin=[1e-9,1e-9,1e-9,1,1e-14,-3];
 
 %% %速度限制
 % v_index=0.15;
@@ -42,6 +44,9 @@ end
 %% %M次运算
 nums=1;
 result_collection(nums,:)=gBest;
+gBest=[0.000573956860243 0.000009280131392 0.009992973699525 2.580635919097652 0.037485269053980 -1.218310929245575];
+
+gBest_result=fitness(gBest);
 for times=1:M
     w=(w_ini-w_end)*(M-times)/M+w_end;
     
@@ -88,23 +93,23 @@ for times=1:M
                 nums=nums+1;
                 gBest=pBest(row,:);
                 result_collection(nums,:)=gBest;
-                figure(2)
-                validate(gBest);
+%                 figure(2)
+%                 validate(gBest);
             end
         end
     end
     disp("current: "+times+" total: "+M +" time= "+toc+" opt= "+gBest_result+" Update Times= "+nums);
     %     disp(gBest);
     result(times)=gBest_result;
-    figure(1)
-    plot(result);
-    xlabel("lteration Times");
-    ylabel("MSE");
-    pause(0.5);
+%     figure(1)
+%     plot(result);
+%     xlabel("lteration Times");
+%     ylabel("MSE");
+%     pause(0.5);
     
-    if gBest_result<0.1
-        break;
-    end
+%     if gBest_result<0.1
+%         break;
+%     end
 end
 
 %%

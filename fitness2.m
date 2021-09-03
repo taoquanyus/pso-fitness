@@ -1,32 +1,27 @@
-function F=fitness(x)
+function F=fitness2(x,Q,l,d,M)
 format long;
-load('t.mat');                               %%%%%³éË®Ê±¿Ì£¬Ê±¼äs%%%%%
-load('sc.mat');                              %%%%%¹Û²â½µÉî£¬µ¥Î»m%%%%%
-iteration_times=50;                          %¸µÁ¢Ò¶ÇóºÍµÄ´ÎÊý
-Q=[0.020868421 0.016911111 0.010409722 0.016051389 0.020252778];    %%%%%³éË®Á÷Á¿m?/s%%%%%
+load('t.mat');                               %%%%%æŠ½æ°´æ—¶åˆ»ï¼Œæ—¶é—´s%%%%%
+load('sc.mat');                              %%%%%è§‚æµ‹é™æ·±ï¼Œå•ä½m%%%%%
+iteration_times=50;                          %å‚…ç«‹å¶æ±‚å’Œçš„æ¬¡æ•°
+% Q=[0.020868421 0.016911111 0.010409722 0.016051389 0.020252778];    %%%%%æŠ½æ°´æµé‡m?/s%%%%%
 Qp=[Q(1) Q(2)-Q(1) Q(3)-Q(2) Q(4)-Q(3) Q(5)-Q(4)];
 Ql=[-Q(1) Q(1)-Q(2) Q(2)-Q(3) Q(3)-Q(4) Q(4)-Q(5)];
-Time=[0,7200,14400,21600,28800];             %%%%%½×ÌÝ½Úµã£¬Ê±¼äs%%%%%
+Time=[0,7200,14400,21600,28800];             %%%%%é˜¶æ¢¯èŠ‚ç‚¹ï¼Œæ—¶é—´s%%%%%
 z=65;
-M=74;                                        %%%%%º¬Ë®²ãºñ¶È%%%%%
-l=72;                                        %%%%%ÂËË®¹ÜÏÂ²¿Éî¶È%%%%%
-d=60;                                        %%%%%ÂËË®¹ÜÉÏ²¿Éî¶È%%%%%
-r=0.105;                                     %%%%%×ê¿×°ë¾¶%%%%%
+r=0.105;                                     %%%%%é’»å­”åŠå¾„%%%%%
 sa=zeros(1,length(t));
 sl=zeros(1,length(t));
 sz=zeros(1,length(z));
 s=zeros(1,length(t));
 P=x(4);
 C=x(5);
-% alpha=[x(6),x(7),x(8),x(9),x(10)];
-alpha=[-4.680053227263616  -3.046726625655400  x(6) -3.200091454643404  -3.294421565104963];
-%-4.680053227263616  -3.046726625655400  -1.218310929245575 -3.200091454643404  -3.294421565104963
+alpha=[x(6),x(7),x(8),x(9),x(10)];
 for p=1:length(t)
     T=x(1)*M;
     a=T/x(3);
 
-    if(p>0&&p<20)                               %%%%¶¨Òå½×ÌÝÁ÷Á¿%%%%%
-        Tp=t(p)-Time(1);                         %%%%ÅÐ¶ÏÊ±¼ä½Úµã%%%%%
+    if(p>0&&p<20)                               %%%%å®šä¹‰é˜¶æ¢¯æµé‡%%%%%
+        Tp=t(p)-Time(1);                         %%%%åˆ¤æ–­æ—¶é—´èŠ‚ç‚¹%%%%%
         ur=r^2/(4*a*Tp);
         fun1 = @(y) exp(-y)./y;
         W_ur= integral(fun1,ur,Inf);
@@ -34,13 +29,13 @@ for p=1:length(t)
         for m=1:length(z)
             Sum1=0;
             for n=1:iteration_times
-                fun2= @(y) (1./y).*(exp(-y-(x(2)/x(1)).*(n*pi*r/M)^2./(4.*y))); %%%%%·ÇÍêÕû¾®Ì©Ë¹¾®º¯Êý%%%%%
+                fun2= @(y) (1./y).*(exp(-y-(x(2)/x(1)).*(n*pi*r/M)^2./(4.*y))); %%%%%éžå®Œæ•´äº•æ³°æ–¯äº•å‡½æ•°%%%%%
                 W_2=integral(fun2,ur,Inf);
-                Fourier=(1/n)*(sin(n*pi*l/M)-sin(n*pi*d/M))*cos(n*pi*z(m)/M); %%%%¸µÀïÒ¶ÇóºÍº¯Êý%%%%%
+                Fourier=(1/n)*(sin(n*pi*l/M)-sin(n*pi*d/M))*cos(n*pi*z(m)/M); %%%%å‚…é‡Œå¶æ±‚å’Œå‡½æ•°%%%%%
                 Sum1=Sum1+Fourier*W_2;
             end
             Sum1=Sum1*2*M/(pi*(l-d));
-            sa(p)=(Qp(1)/(4*pi*T))*(W_ur+Sum1);           %%%%µÚÒ»½×ÌÝ½×¶Î½µÉî%%%%%
+            sa(p)=(Qp(1)/(4*pi*T))*(W_ur+Sum1);           %%%%ç¬¬ä¸€é˜¶æ¢¯é˜¶æ®µé™æ·±%%%%%
             sz(m)=sa(p);
         end
         
@@ -63,10 +58,10 @@ for p=1:length(t)
             Sum1=0;
             Sum2=0;
             for n=1:iteration_times
-                fun2= @(y) (1./y).*(exp(-y-(x(2)/x(1)).*(n*pi*r/M)^2./(4.*y))); %%%%%·ÇÍêÕû¾®Ì©Ë¹¾®º¯Êý%%%%%
+                fun2= @(y) (1./y).*(exp(-y-(x(2)/x(1)).*(n*pi*r/M)^2./(4.*y))); %%%%%éžå®Œæ•´äº•æ³°æ–¯äº•å‡½æ•°%%%%%
                 W_2_1=integral(fun2,ur1,Inf);
                 W_2_2=integral(fun2,ur2,Inf);
-                Fourier=(1/n)*(sin(n*pi*l/M)-sin(n*pi*d/M))*cos(n*pi*z(m)/M); %%%%¸µÀïÒ¶ÇóºÍº¯Êý%%%%%
+                Fourier=(1/n)*(sin(n*pi*l/M)-sin(n*pi*d/M))*cos(n*pi*z(m)/M); %%%%å‚…é‡Œå¶æ±‚å’Œå‡½æ•°%%%%%
                 Sum1=Sum1+Fourier*W_2_1;
                 Sum2=Sum2+Fourier*W_2_2;
             end
@@ -75,7 +70,7 @@ for p=1:length(t)
             Sum2=Sum2*2*M/(pi*(l-d));
             Sum1=(Qp(1)/(4*pi*T))*(W_ur1+Sum1);
             Sum2=(Qp(2)/(4*pi*T))*(W_ur2+Sum2);
-            sa(p)=Sum1+Sum2;     %%%%µÚ¶þ½×ÌÝ½×¶Î½µÉî+µÚÒ»½×ÌÝ½µÉî%%%%%
+            sa(p)=Sum1+Sum2;     %%%%ç¬¬äºŒé˜¶æ¢¯é˜¶æ®µé™æ·±+ç¬¬ä¸€é˜¶æ¢¯é™æ·±%%%%%
             sz(m)=sa(p);
         end
 
@@ -99,11 +94,11 @@ for p=1:length(t)
             Sum2=0;
             Sum3=0;
             for n=1:iteration_times
-                fun2= @(y) (1./y).*(exp(-y-(x(2)/x(1)).*(n*pi*r/M)^2./(4.*y))); %%%%%·ÇÍêÕû¾®Ì©Ë¹¾®º¯Êý%%%%%
+                fun2= @(y) (1./y).*(exp(-y-(x(2)/x(1)).*(n*pi*r/M)^2./(4.*y))); %%%%%éžå®Œæ•´äº•æ³°æ–¯äº•å‡½æ•°%%%%%
                 W_2_1=integral(fun2,ur1,Inf);
                 W_2_2=integral(fun2,ur2,Inf);
                 W_2_3=integral(fun2,ur3,Inf);
-                Fourier=(1/n)*(sin(n*pi*l/M)-sin(n*pi*d/M))*cos(n*pi*z(m)/M); %%%%¸µÀïÒ¶ÇóºÍº¯Êý%%%%%
+                Fourier=(1/n)*(sin(n*pi*l/M)-sin(n*pi*d/M))*cos(n*pi*z(m)/M); %%%%å‚…é‡Œå¶æ±‚å’Œå‡½æ•°%%%%%
                 Sum1=Sum1+Fourier*W_2_1;
                 Sum2=Sum2+Fourier*W_2_2;
                 Sum3=Sum3+Fourier*W_2_3;
@@ -115,7 +110,7 @@ for p=1:length(t)
             Sum1=(Qp(1)/(4*pi*T))*(W_ur1+Sum1);
             Sum2=(Qp(2)/(4*pi*T))*(W_ur2+Sum2);
             Sum3=(Qp(3)/(4*pi*T))*(W_ur3+Sum3);
-            sa(p)=Sum1+Sum2+Sum3;     %%%%µÚ¶þ½×ÌÝ½×¶Î½µÉî+µÚÒ»½×ÌÝ½µÉî%%%%%
+            sa(p)=Sum1+Sum2+Sum3;     %%%%ç¬¬äºŒé˜¶æ¢¯é˜¶æ®µé™æ·±+ç¬¬ä¸€é˜¶æ¢¯é™æ·±%%%%%
             sz(m)=sa(p);
         end
         
@@ -143,12 +138,12 @@ for p=1:length(t)
             Sum3=0;
             Sum4=0;
             for n=1:iteration_times
-                fun2= @(y) (1./y).*(exp(-y-(x(2)/x(1)).*(n*pi*r/M)^2./(4.*y))); %%%%%·ÇÍêÕû¾®Ì©Ë¹¾®º¯Êý%%%%%
+                fun2= @(y) (1./y).*(exp(-y-(x(2)/x(1)).*(n*pi*r/M)^2./(4.*y))); %%%%%éžå®Œæ•´äº•æ³°æ–¯äº•å‡½æ•°%%%%%
                 W_2_1=integral(fun2,ur1,Inf);
                 W_2_2=integral(fun2,ur2,Inf);
                 W_2_3=integral(fun2,ur3,Inf);
                 W_2_4=integral(fun2,ur4,Inf);
-                Fourier=(1/n)*(sin(n*pi*l/M)-sin(n*pi*d/M))*cos(n*pi*z(m)/M); %%%%¸µÀïÒ¶ÇóºÍº¯Êý%%%%%
+                Fourier=(1/n)*(sin(n*pi*l/M)-sin(n*pi*d/M))*cos(n*pi*z(m)/M); %%%%å‚…é‡Œå¶æ±‚å’Œå‡½æ•°%%%%%
                 Sum1=Sum1+Fourier*W_2_1;
                 Sum2=Sum2+Fourier*W_2_2;
                 Sum3=Sum3+Fourier*W_2_3;
@@ -163,7 +158,7 @@ for p=1:length(t)
             Sum2=(Qp(2)/(4*pi*T))*(W_ur2+Sum2);
             Sum3=(Qp(3)/(4*pi*T))*(W_ur3+Sum3);
             Sum4=(Qp(4)/(4*pi*T))*(W_ur4+Sum4);
-            sa(p)=Sum1+Sum2+Sum3+Sum4;     %%%%µÚ¶þ½×ÌÝ½×¶Î½µÉî+µÚÒ»½×ÌÝ½µÉî%%%%%
+            sa(p)=Sum1+Sum2+Sum3+Sum4;     %%%%ç¬¬äºŒé˜¶æ¢¯é˜¶æ®µé™æ·±+ç¬¬ä¸€é˜¶æ¢¯é™æ·±%%%%%
             sz(m)=sa(p);
         end
         
@@ -195,13 +190,13 @@ for p=1:length(t)
             Sum4=0;
             Sum5=0;
             for n=1:iteration_times
-                fun2= @(y) (1./y).*(exp(-y-(x(2)/x(1)).*(n*pi*r/M)^2./(4.*y))); %%%%%·ÇÍêÕû¾®Ì©Ë¹¾®º¯Êý%%%%%
+                fun2= @(y) (1./y).*(exp(-y-(x(2)/x(1)).*(n*pi*r/M)^2./(4.*y))); %%%%%éžå®Œæ•´äº•æ³°æ–¯äº•å‡½æ•°%%%%%
                 W_2_1=integral(fun2,ur1,Inf);
                 W_2_2=integral(fun2,ur2,Inf);
                 W_2_3=integral(fun2,ur3,Inf);
                 W_2_4=integral(fun2,ur4,Inf);
                 W_2_5=integral(fun2,ur5,Inf);
-                Fourier=(1/n)*(sin(n*pi*l/M)-sin(n*pi*d/M))*cos(n*pi*z(m)/M); %%%%¸µÀïÒ¶ÇóºÍº¯Êý%%%%%
+                Fourier=(1/n)*(sin(n*pi*l/M)-sin(n*pi*d/M))*cos(n*pi*z(m)/M); %%%%å‚…é‡Œå¶æ±‚å’Œå‡½æ•°%%%%%
                 Sum1=Sum1+Fourier*W_2_1;
                 Sum2=Sum2+Fourier*W_2_2;
                 Sum3=Sum3+Fourier*W_2_3;
@@ -219,7 +214,7 @@ for p=1:length(t)
             Sum3=(Qp(3)/(4*pi*T))*(W_ur3+Sum3);
             Sum4=(Qp(4)/(4*pi*T))*(W_ur4+Sum4);
             Sum5=(Qp(5)/(4*pi*T))*(W_ur5+Sum5);
-            sa(p)=Sum1+Sum2+Sum3+Sum4+Sum5;     %%%%µÚ¶þ½×ÌÝ½×¶Î½µÉî+µÚÒ»½×ÌÝ½µÉî%%%%%
+            sa(p)=Sum1+Sum2+Sum3+Sum4+Sum5;     %%%%ç¬¬äºŒé˜¶æ¢¯é˜¶æ®µé™æ·±+ç¬¬ä¸€é˜¶æ¢¯é™æ·±%%%%%
             sz(m)=sa(p);
         end
         
@@ -229,10 +224,4 @@ for p=1:length(t)
         s(p)=sa(p)+sl(p);
     end
 end
-result=(1/length(t)*sum((s-sc').^2))^(1/2);
-    if isnan(result)
-        F=Inf;
-    else
-        F=result;
-    end
-end
+F=s;

@@ -1,10 +1,10 @@
 N=100;
 c1=2;
 c2=2;
-w_ini=1.8;
+w_ini=1;
 w_end=0.2;
 M=2000;
-D=10;
+D=6;
 [xm,fv]=new_PSO(@fitness,N,c1,c2,w_ini,w_end,M,D);
 xm;
 fv;

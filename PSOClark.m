@@ -1,33 +1,31 @@
-function[xm,fv]=new_PSO(fitness,N,c1,c2,w_ini,w_end,M,D)
-%% %Î»ÖÃÏŞÖÆ
+function[xm,fv]=PSOClark(clark,N,c1,c2,w_ini,w_end,M,D)
+%% %ä½ç½®é™åˆ¶
 tic;
-xMax=[1e-2,1e-2,1e-2,3,1,3,3,3,3,3];
-% xMax=[1e-2,1e-2,1e-2,3,1,3];
-xMin=[1e-9,1e-9,1e-9,1,1e-14,-3,-3,-3,-3,-3];
-% xMin=[1e-9,1e-9,1e-9,1,1e-14,-3];
+xMax=[1e-2,1e-2,3,1,3,3,3,3,3,3];
+xMin=[1e-9,1e-9,1,1e-14,-3,-3,-3,-3,-3,-3];
 
-%% %ËÙ¶ÈÏŞÖÆ
+%% %é€Ÿåº¦é™åˆ¶
 % v_index=0.15;
 % vMax=v_index*(xMax-xMin);
 % vMax=0.5*ones(1,10);
 % vMin=-vMax;
 vMax=0.5;
 vMin=-0.5;
-%% %³õÊ¼»¯Î»ÖÃ,ËÙ¶È
+%% %åˆå§‹åŒ–ä½ç½®,é€Ÿåº¦
 
 x_cur=rand(N,D).*(xMax-xMin)+xMin;
 % x_cur(1,:)=[0.000585764066514 0.000123132275533 0.005415238111098 1.408037862239064 0.414684292768394 -2.43 -1.58 -1.58 -1.65 -1.71];
-% v=rand(N,D).*(vMax-vMin)+vMin;
+v=rand(N,D).*(vMax-vMin)+vMin;
 
-%% %Ê×´Îµü´ú
-results=zeros(N,1);%½á¹û¾ØÕó
+%% %é¦–æ¬¡è¿­ä»£
+results=zeros(N,1);%ç»“æœçŸ©é˜µ
 pBest=x_cur;
 gBest=x_cur(1,:);
-pBest_result=inf;%¾Ö²¿×îÓÅ½â³õÊ¼»¯
-gBest_result=inf;%È«¾Ö×îÓÅ½â³õÊ¼»¯
+pBest_result=inf;%å±€éƒ¨æœ€ä¼˜è§£åˆå§‹åŒ–
+gBest_result=inf;%å…¨å±€æœ€ä¼˜è§£åˆå§‹åŒ–
 
 for row=1:N
-    results(row)=fitness(x_cur(row,:));
+    results(row)=clark(x_cur(row,:));
     if results(row)<pBest_result
         pBest_result=results(row);
         pBest(row,:)=x_cur(row,:);
@@ -39,15 +37,14 @@ for row=1:N
     end
 end
 
-%% %M´ÎÔËËã
+%% %Mæ¬¡è¿ç®—
 nums=1;
-result_collection(nums,:)=gBest;
 for times=1:M
     w=(w_ini-w_end)*(M-times)/M+w_end;
     
     for row=1:N
         v(row,:)=w*v(row,:)+c1*rand*(pBest(row,:)-x_cur(row,:))+c2*rand*(gBest-x_cur(row,:));
-        %ËÙ¶ÈÏŞÖÆ
+        %é€Ÿåº¦é™åˆ¶
         for temp=1:D
             if v(row,temp)>vMax
                 v(row,temp)=vMax;
@@ -57,18 +54,19 @@ for times=1:M
             end
         end
         
-        %Î»ÖÃÏŞÖÆ
+        %ä½ç½®é™åˆ¶
         x_cur(row,:)=x_cur(row,:)+v(row,:);
         
         if x_cur(row,2)>x_cur(row,1)
-            x_cur(row,2)=x_cur(row,1);
+            x_cur(row,2)=0.1*x_cur(row,1);
         end
+     
         flag=0;
         for temp=1:D
             if x_cur(row,temp)>xMax(temp)
                 flag=1;
             end
-            if x_cur(row,temp)<xMax(temp)
+            if x_cur(row,temp)<xMin(temp)
                 %                 x_cur(row,temp)=xMin(temp);
                 flag=1;
             end
@@ -77,8 +75,8 @@ for times=1:M
             continue;
         end
         
-        %µü´ú
-        results(row)=fitness(x_cur(row,:));
+        %è¿­ä»£
+        results(row)=clark(x_cur(row,:));
         if results(row)<pBest_result
             pBest_result=results(row);
             pBest(row,:)=x_cur(row,:);
@@ -87,27 +85,27 @@ for times=1:M
                 nums=nums+1;
                 gBest=pBest(row,:);
                 result_collection(nums,:)=gBest;
-                figure(2)
-                validate(gBest);
+%                 figure(2)
+%                 validate(gBest);
             end
         end
     end
     disp("current: "+times+" total: "+M +" time= "+toc+" opt= "+gBest_result+" Update Times= "+nums);
     %     disp(gBest);
     result(times)=gBest_result;
-    figure(1)
-    plot(result);
-    xlabel("lteration Times");
-    ylabel("MSE");
-    pause(0.5);
+%     figure(1)
+%     plot(result);
+%     xlabel("lteration Times");
+%     ylabel("MSE");
+%     pause(0.5);
     
-    if gBest_result<0.1
-        break;
-    end
+%     if gBest_result<0.1
+%         break;
+%     end
 end
 
 %%
-%½áÊø
+%ç»“æŸ
 save fv gBest_result -ascii;
 xm=gBest';
 fv=gBest_result;
