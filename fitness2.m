@@ -1,4 +1,5 @@
 function F=fitness2(x,Q,l,d,M)
+%重写了一份fitness
 format long;
 load('t.mat');                               %%%%%抽水时刻，时间s%%%%%
 load('sc.mat');                              %%%%%观测降深，单位m%%%%%
