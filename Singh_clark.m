@@ -49,7 +49,7 @@ for m=1:length(Tclark)
 %     else
 %         t_delta=Tclark(m)-Tclark(m-1);
 %     end
-    t_delta=(1080-5)/175;
+    t_delta=(Tclark(length(Tclark))-Tclark(1))/(length(Tclark)-1);
     ur=(a2/(m*t_delta));
     fun1 = @(y) exp(-y)./y;
     F(m)= a1*integral(fun1,ur,Inf);
