@@ -44,11 +44,12 @@ sa=zeros(1,length(Tclark));
 F=zeros(1,length(Tclark));
 delta=zeros(1,length(Tclark));
 for m=1:length(Tclark)
-    if(m==1)
-        t_delta=Tclark(1);
-    else
-        t_delta=Tclark(m)-Tclark(m-1);
-    end
+%     if(m==1)
+%         t_delta=Tclark(1);
+%     else
+%         t_delta=Tclark(m)-Tclark(m-1);
+%     end
+    t_delta=(1080-5)/175;
     ur=(a2/(m*t_delta));
     fun1 = @(y) exp(-y)./y;
     F(m)= a1*integral(fun1,ur,Inf);
@@ -62,9 +63,9 @@ for m=1:length(Tclark)
     for k=1:m
         if(k>0&&k<27)
             Q=Q_data(1);
-        elseif(k>=27&&k<27)
+        elseif(k>=27&&k<57)
             Q=Q_data(2);
-        elseif(k>=27&&k<87)
+        elseif(k>=57&&k<87)
             Q=Q_data(3);
         elseif(k>=87&&k<117)
             Q=Q_data(4);
