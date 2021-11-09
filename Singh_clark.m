@@ -1,4 +1,4 @@
-function mse=Singh_clark(x)
+function rmse=Singh_clark(x)
 %X [x1,x2,x3,x4]
 %x1 C coefficient of well loss
 %x2 n loss exponent
@@ -13,7 +13,6 @@ r=0.105;%you may change r due to unit
 n=x(2);
 Q_data=[1306 1693 2423 3261 4094 5019];%m^3/day
 Q_data=Q_data/(24*60);%Unit conversion
-
 a1=1/(4*pi*T);
 a2=(r^2*S)/(4*T);
 a3=x(1);
@@ -78,10 +77,10 @@ for m=1:length(Tclark)
     end
 end
 s=sa+sw;
-mse=(1/length(Tclark)*sum((s-Sclark').^2))^(1/2);
-
-if isnan(mse)
-    mse=Inf;
+rmse=sqrt(mean((s'-Sclark).^2));
+% sse = (1/(length(Tclark)-length(x))*sum((s-Sclark').^2))^(1/2)
+if isnan(rmse)
+    rmse=Inf;
 end
 
 plot(Tclark,Sclark,'o',Tclark,s,'-');
