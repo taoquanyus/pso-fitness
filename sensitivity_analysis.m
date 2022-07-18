@@ -1,5 +1,5 @@
 %% sensitivity analysis
-delta_p = 0.01;
+% delta_p = 0.01;
 alphas = 0.1*ones(1,5);
 delta_Q = 200;
 C = 0.01;
@@ -7,11 +7,13 @@ P = 2;
 Kx = 5;
 Kz = 0.5;
 S = 0.0001;
-M = 72;
+M = 1/74;
 rate = 0.01;
+
 
 x = [Kx,Kz,S,P,C,alphas,M,delta_Q];
 load('t.mat');
+t=t/(24*3600);
 %% P
 delta_x = zeros(1,length(x));
 delta_x(4) = x(4)*rate;
@@ -27,7 +29,7 @@ partial_C = (sensitivity(x+delta_x)-sensitivity(x))/delta_x(12);
 r = x(12)*partial_C;
 plot(t,r,'g');
 
-%% M/(l-d)
+%% (l-d)/M
 delta_x = zeros(1,length(x));
 delta_x(11) = x(11)*rate;
 partial_C = (sensitivity(x+delta_x)-sensitivity(x))/delta_x(11);
